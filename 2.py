@@ -51,7 +51,6 @@ time.sleep(0.5)
 
 logging.info('Добавление списка names в файл Version.json')
 with open('version.json', 'r+') as f:
-   data = json.load(f)       #переделать (удалить эту строчку т.к. то же есть в 38 строке?
    data['files']= names
    f.seek(0)
    json.dump(data, f)
