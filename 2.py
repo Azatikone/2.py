@@ -5,6 +5,7 @@ import json
 import zipfile
 import datetime
 import logging
+import time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,6 +17,7 @@ download_fold='git_hellokuber_tenzor'
 os.makedirs(download_fold, exist_ok=True)
 url = "https://api.github.com/repos/paulbouwer/hello-kubernetes/contents/src/app"
 files = requests.get(url).json()
+time.sleep(0.5)
 
 logging.info('Запрос файлов из репозитория')
 for file in files:
@@ -25,9 +27,13 @@ for file in files:
         filename = file['name']
         n=open(f"{download_fold}/{filename}",'wb')
         n.write(content)
+time.sleep(0.5)
 
 logging.info('Создание файла Version.json')
-    pass
+ver_file = {"name": "hello world "}
+with open('Version.json', 'w') as outfile:
+    json.dump(ver_file, outfile)
+time.sleep(0.5)
 
 logging.info('Выгрузка версии')
 with open("git_hellokuber_tenzor/package.json") as f:
@@ -37,9 +43,11 @@ with open('version.json', 'r') as f:
    data['version']= ver
 with open('version.json', 'w') as f:
    json.dump(data, f)
+time.sleep(0.5)
 
 logging.info('Создание списка фалов для файла Version.json')
 names = [i for i in os.listdir('git_hellokuber_tenzor') if i.endswith('.js') or i.endswith('.py') or i.endswith('.sh')]
+time.sleep(0.5)
 
 logging.info('Добавление списка names в файл Version.json')
 with open('version.json', 'r+') as f:
@@ -47,6 +55,7 @@ with open('version.json', 'r+') as f:
    data['files']= names
    f.seek(0)
    json.dump(data, f)
+time.sleep(0.5)
 
 logging.info('Упаковка файлов в архив')
 date = datetime.date.today().strftime('%d%m%Y')
