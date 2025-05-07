@@ -1,17 +1,17 @@
 import random
 import json
 
-
 conf = {"Sh1": "3.7.*", "Sh2": "3.*.1", "Sh3": "1.2.3.*"}
 with open('confile.json', 'w') as f:
     json.dump(conf, f)
 
-num = '3.7.9'  #input() сделать в конце
+#num = '1.2.3.5'  #input() сделать в конце
+num = '3.7.5'
 
 result = {}
 for key, value in conf.items():
     vers = []
-    for _ in range(10):
+    for _ in range(8):
         parts = value.split('.')
         new_parts = []
         for p in parts:
@@ -50,7 +50,9 @@ for i in result.items():
                     if int(num[ind]) > int(j[ind]):
                         finlist3.append(j)
                         Sh3 = 'Sh3'
-ud = 'удовлетворяет'
-print(Sh1, *finlist1)
-print(Sh2, *finlist2)
-print(Sh3, *finlist3)
+
+listfl=[finlist1,finlist2,finlist3]
+
+for i in range(1,len(result)+1):
+        if listfl[i-1] != []:
+            print(f'Sh{i} удовлетворяет',*listfl[i-1][:2], sep = '  ')
