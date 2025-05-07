@@ -5,11 +5,14 @@ conf = {"Sh1": "3.7.*", "Sh2": "3.*.1", "Sh3": "1.2.3.*"}
 with open('confile.json', 'w') as f:
     json.dump(conf, f)
 
-#num = '1.2.3.5'  #input() сделать в конце
+#num = '1.2.3.5'  #input() сделать в конце если нужно
 num = '3.7.5'
 
+with open('confile.json', 'r') as f:
+    conf2 = json.load(f)
+
 result = {}
-for key, value in conf.items():
+for key, value in conf2.items():
     vers = []
     for _ in range(8):
         parts = value.split('.')
@@ -35,7 +38,7 @@ r=0
 dl = len(num)
 for i in result.items():
     for j in i[1]:
-        ind = list(conf.values())[int(i[0][-1]) - 1].find('*')
+        ind = list(conf2.values())[int(i[0][-1]) - 1].find('*')
         if ''.join(j[0:ind].split('.')) <= ''.join(num[0:ind].split('.')):
             if dl==len(i[1][0]):
                 if i[0]=='Sh1':
