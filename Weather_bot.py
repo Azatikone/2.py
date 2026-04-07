@@ -111,12 +111,13 @@ def startBot(message):
 
 @bot.message_handler(content_types=['text'])        #Обработчик сообщений
 def city(message):
+    message_cap = message.text.capitalize()  #Преобразование слова к заглавной первой букве
     city = f" Погода в {message.text}:"
     #send_msg = bot.send_message(message.chat.id, city, parse_mode='html')
 
-    if message.text in cities:
-        response3 = requests.get( f"https://api.openweathermap.org/data/2.5/weather?q={cities[message.text]}&appid={weather_api_key}&units=metric&lang=ru").json()
-        fin_msg = f" Погода в {message.text}е: {response3['weather'][0]['description']}, температура {response3['main']['temp']} °C, ощущается как {response3['main']['feels_like']} °C, давление  {round((response3['main']['pressure'])/1.333,1)}, влажность {response3['main']['humidity']}%."
+    if message_cap in cities:
+        response3 = requests.get( f"https://api.openweathermap.org/data/2.5/weather?q={cities[message_cap]}&appid={weather_api_key}&units=metric&lang=ru").json()
+        fin_msg = f" Погода в {message_cap}е: {response3['weather'][0]['description']}, температура {response3['main']['temp']} °C, ощущается как {response3['main']['feels_like']} °C, давление  {round((response3['main']['pressure'])/1.333,1)}, влажность {response3['main']['humidity']}%."
         bot.send_message(message.chat.id,  fin_msg  , parse_mode='html')
             # Вставка данных в БД для Логирования
         DATABASE_URL = "postgresql://admin:12345@localhost:5432/test_db"            # Строка подключения
