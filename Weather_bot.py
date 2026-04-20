@@ -154,8 +154,6 @@ def city(message):
     user_id = message.from_user.id
     username = message.from_user.username
 
-
-
 # Скрипт для БД: (Добавить обработку в ELSE текста не подходящего под город, добавить новую таблицу пример: request_not_found_log)
 
 '''DATABASE_URL = "postgresql://admin:12345@localhost:5432/test_db"
