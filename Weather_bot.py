@@ -15,6 +15,8 @@ response2 = requests.get(url2) # Прогноз на 5 дней
 
 #print(response.json())
 
+DATABASE_URL = "postgresql://admin:12345@localhost:5432/test_db"  #Адрес бд (Строка подключения)
+
 # Скрипт бота
 cities = {
     "Архангельск": "Arkhangelsk",
@@ -101,7 +103,7 @@ cities = {
     "Южно-Сахалинск": "Yuzhno-Sakhalinsk",
     "Якутск": "Yakutsk",
     "Ярославль": "Yaroslavl"
-}
+}  #Список городов
 
 @bot.message_handler(commands=['start'])        #  Вступительное сообщение
 def startBot(message):
@@ -111,6 +113,12 @@ def startBot(message):
 
 @bot.message_handler(content_types=['text'])        #Обработчик сообщений
 def city(message):
+
+    engine = create_engine(DATABASE_URL)  # Создание движка
+    metadata = MetaData()  # Объявление контейнера для БД
+    table = Table("user_activity_log", metadata, autoload_with=engine)  # Авто-считывание структуры таблицы
+    table2 = Table("request_not_found_log", metadata, autoload_with=engine)  # Авто-считывание структуры таблицы
+
     message_cap = message.text.capitalize()  #Преобразование слова к заглавной первой букве
     city = f" Погода в {message.text}:"
     #send_msg = bot.send_message(message.chat.id, city, parse_mode='html')
@@ -120,10 +128,6 @@ def city(message):
         fin_msg = f" Погода в {message_cap}е: {response3['weather'][0]['description']}, температура {response3['main']['temp']} °C, ощущается как {response3['main']['feels_like']} °C, давление  {round((response3['main']['pressure'])/1.333,1)}, влажность {response3['main']['humidity']}%."
         bot.send_message(message.chat.id,  fin_msg  , parse_mode='html')
             # Вставка данных в БД для Логирования
-        DATABASE_URL = "postgresql://admin:12345@localhost:5432/test_db"            # Строка подключения
-        engine = create_engine(DATABASE_URL)                                        # Создание движка
-        metadata = MetaData()                                                       # Объявление контейнера для БД
-        table = Table("user_activity_log", metadata, autoload_with=engine)    # Авто-считывание структуры таблицы
         log_data = {
             message.text: response3['weather'][0]['description'],
             'температура': response3['main']['temp'],
@@ -138,13 +142,21 @@ def city(message):
             conn.execute(stmt)
     else:
         bot.send_message(message.chat.id, 'Город не найден')
+        log_data = {
+            'Некорректные данные': message.text }  # Json для БД
+        with engine.begin() as conn2:
+            # Собираем запрос
+            stmt2 = insert(table2).values(user_id=message.from_user.id, username=message.from_user.username,
+                                        data=log_data)
+            # Выполняем
+            conn2.execute(stmt2)
 
     user_id = message.from_user.id
     username = message.from_user.username
 
 
 
-# Скрипт для БД: (Добавить обработку в ELSE текста не подходящего под город, добавить новую таблицу пример: User_not_found_log)
+# Скрипт для БД: (Добавить обработку в ELSE текста не подходящего под город, добавить новую таблицу пример: request_not_found_log)
 
 '''DATABASE_URL = "postgresql://admin:12345@localhost:5432/test_db"
 engine = create_engine(DATABASE_URL)
@@ -167,9 +179,5 @@ print(f"✅ Результат теста: {result.all()}")    #{result.scalar()
 # 4. ОБЯЗАТЕЛЬНО закрываем соединение сами
 connection.close()
 '''
-
-
-
-
 
 bot.polling(none_stop=True)
