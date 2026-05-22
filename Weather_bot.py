@@ -67,13 +67,13 @@ cities = {
     "Пенза": "Penza",
     "Пермь": "Perm",
     "Петрозаводск": "Petrozavodsk",
-    "Петропавловск-Камчатский": "Petropavlovsk-Kamchatsky",
+    "Петропавловск-Камчатский": "Petropavlovsk-Kamchatskiy",
     "Псков": "Pskov",
     "Пятигорск": "Pyatigorsk",
     "Ростов-на-Дону": "Rostov-on-Don",
     "Рязань": "Ryazan",
     "Самара": "Samara",
-    "Санкт-Петербург": "Saint Petersburg",
+    "Санкт-Петербург": "Novaya Gollandiya",
     "Саранск": "Saransk",
     "Саратов": "Saratov",
     "Севастополь": "Sevastopol",
@@ -119,7 +119,7 @@ def city(message):
     table = Table("user_activity_log", metadata, autoload_with=engine)  # Авто-считывание структуры таблицы
     table2 = Table("request_not_found_log", metadata, autoload_with=engine)  # Авто-считывание структуры таблицы
 
-    message_cap = message.text.capitalize()  #Преобразование слова к заглавной первой букве
+    message_cap = message.text.title()  #Преобразование слова к заглавной первой букве
     city = f" Погода в {message.text}:"
     #send_msg = bot.send_message(message.chat.id, city, parse_mode='html')
 
